@@ -40,21 +40,20 @@ export default function AuthExample() {
 }
 
 const fakeAuth = {
-  isAuthenticated: false,
   authenticate(cb: any) {
-    fakeAuth.isAuthenticated = true;
+    localStorage.setItem('isAuthenticated', 'true');
     setTimeout(cb, 100); // fake async
   },
   signout(cb: any) {
-    fakeAuth.isAuthenticated = false;
+    localStorage.setItem('isAuthenticated', 'false');
     setTimeout(cb, 100);
   }
 };
 
 function AuthButton() {
   let history = useHistory();
-
-  return fakeAuth.isAuthenticated ? (
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  return isAuthenticated ? (
     <p>
       Welcome!{" "}
       <button
@@ -75,11 +74,12 @@ function AuthButton() {
 
 // @ts-ignore
 function PrivateRoute({ children, ...rest }) {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        fakeAuth.isAuthenticated ? (
+        isAuthenticated ? (
           children
         ) : (
             <Redirect
